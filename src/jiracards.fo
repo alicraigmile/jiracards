@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+
+<fo:layout-master-set>
+  <fo:simple-page-master master-name="A4" page-width="297mm"
+page-height="210mm" margin-top="1cm" margin-bottom="1cm"
+margin-left="1cm" margin-right="1cm">
+  <fo:region-body margin="1cm"/>
+  <fo:region-before extent="0cm"/>
+  <fo:region-after extent="0cm"/>
+  <fo:region-start extent="2cm"/>
+  <fo:region-end extent="2cm"/>
+  </fo:simple-page-master>
+</fo:layout-master-set>
+
+<fo:page-sequence master-reference="A4">
+<fo:static-content flow-name="xsl-region-after">
+<fo:block text-align-last="center" font-size="10pt">
+<fo:page-number/>
+</fo:block>
+</fo:static-content>
+<fo:flow flow-name="xsl-region-body">
+  <!--
+    <fo:block>
+      <fo:external-graphic src="url('file://images/alic_craigmile.jpg')"/>
+</fo:block>
+    <fo:block>
+      <fo:external-graphic src="url('file://Users/craiga01/workspace/jiracards-pdf/src/com/craigmile/ali/fonts/images/alic_craigmile.jpg')"/>
+</fo:block>
+    <fo:block>
+</fo:block>
+    <fo:block font-size="48pt" font-family="Curious Sans (Bold)" border-width="1mm">
+ world</fo:block>
+    <fo:block font-size="48pt" font-family="Geeza Pro" border-width="1mm">
+Hello world</fo:block>
+-->
+    <fo:block font-size="48pt">Jira cards</fo:block>
+    <fo:block font-size="14pt" font-family="sans-serif">
+        A sample set of jira cards printed out.
+      </fo:block>
+
+  <fo:block-container height="55mm" width="110mm">
+    <fo:block margin-top="5mm" border="solid 0.5mm black">
+      <fo:block-container line-height="2" text-indent="5mm">
+      <fo:block font-weight="bold">Hello World!</fo:block>
+      <fo:float float="right">
+        <fo:block>8182</fo:block>
+      </fo:float>
+      </fo:block-container>
+    </fo:block>
+    <fo:block text-indent="5mm" border="solid 0.5mm black" line-height="2"  border-top-width="0mm" >
+      <fo:block-container height="35mm">
+        <fo:block><fo:inline color="#aaaaaa">As a</fo:inline> Student</fo:block>
+        <fo:block><fo:inline color="#aaaaaa">I want</fo:inline> to see Hello World</fo:block>
+        <fo:block><fo:inline color="#aaaaaa">So that</fo:inline> I can tell if the application works</fo:block>
+      </fo:block-container>
+    </fo:block>
+  </fo:block-container>
+
+  <fo:block-container height="55mm" width="110mm">
+    <fo:block margin-top="5mm" padding="5mm" border="solid 0.5mm black">
+      <fo:block-container line-height="2">
+      <fo:block font-weight="bold" margin-right="20mm">Improve curriculum navigation</fo:block>
+        <fo:block-container position="absolute" right="0mm" width="20mm" line-height="2">
+          <fo:block border="solid 0.5mm #aaaaaa" text-align="center" >161</fo:block>
+        </fo:block-container>
+      </fo:block-container>
+    </fo:block>
+    <fo:block padding="5mm" border="solid 0.5mm black" line-height="2"  border-top-width="0mm" font-size="14pt">
+      <fo:block-container height="35mm">
+        <fo:block><fo:inline color="#aaaaaa">As a</fo:inline> Student or Teacher</fo:block>
+        <fo:block><fo:inline color="#aaaaaa">I want</fo:inline> to know which resources are contained within a topic</fo:block>
+        <fo:block><fo:inline color="#aaaaaa">So that</fo:inline> I can find resoruces more easily</fo:block>
+      </fo:block-container>
+    </fo:block>
+  </fo:block-container>
+
+  <fo:block-container height="55mm" width="110mm">
+    <fo:block margin-top="5mm" padding="5mm" border="solid 0.5mm black">
+      <fo:block-container line-height="2">
+      <fo:block font-weight="bold" margin-right="20mm">Implement a story with a really long title which will appear wrapped on the card</fo:block>
+        <fo:block-container position="absolute" right="0mm" width="20mm" line-height="2">
+          <fo:block border="solid 0.5mm #aaaaaa" text-align="center" >8182</fo:block>
+        </fo:block-container>
+      </fo:block-container>
+    </fo:block>
+    <fo:block padding="5mm" border="solid 0.5mm black" line-height="2"  border-top-width="0mm" >
+      <fo:block-container height="35mm">
+        <fo:block><fo:inline color="#aaaaaa">As a</fo:inline> Student</fo:block>
+        <fo:block><fo:inline color="#aaaaaa">I want</fo:inline> to see Hello World</fo:block>
+        <fo:block><fo:inline color="#aaaaaa">So that</fo:inline> I can tell if the application works</fo:block>
+      </fo:block-container>
+    </fo:block>
+  </fo:block-container>
+
+  </fo:flow>
+
+</fo:page-sequence>
+
+
+</fo:root>

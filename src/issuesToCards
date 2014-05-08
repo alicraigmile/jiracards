@@ -1,0 +1,100 @@
+#!/usr/bin/env perl
+
+# convert an XML feed of a JIRA issues list to an XML cards file (no subtasks)
+
+use strict;
+use warnings;
+
+use Getopt::Std;
+use XML::Simple;
+
+binmode(STDOUT, ":utf8");          #treat as if it is UTF-8
+
+our %opts = ();
+getopt ':f', \%opts;
+
+if (! $opts{f}) {
+  print "** You need to supply a filename\n" if ! $opts{f};
+  usage();
+  exit 0;
+}
+
+local $/;
+open( my $fh, '<', $opts{f} );
+my $xml_text   = <$fh>;
+
+my $issues_data = XMLin( $xml_text, KeepRoot => 1 );
+
+
+#use Data::Dumper;
+#die  Dumper($issues_data);
+
+#print "\n----------------\n";
+#print $issues_data->{rss}{channel}{title};
+#die "items: " . @{$issues_data->{rss}{channel}{item}};
+#print "\n----------------\n";
+
+my @cards = ();
+
+foreach my $issue (@{$issues_data->{rss}{channel}{item}}) {
+  next if $issue->{type} eq 'Sub-task';
+  next if $issue->{type} eq 'Bug Sub-task';
+
+  my $as_a = find_in_description($issue->{description}, "As a ");
+  my $i_want =  find_in_description($issue->{description}, "I want ") || find_in_description($issue->{description}, "I would like ");
+  my $so_that =  find_in_description($issue->{description}, "So that ");
+
+  my $card = { 
+    ticket => $issue->{key}{content},
+    title => $issue->{summary},
+    priority => lc $issue->{priority}{content},
+    type => lc $issue->{type}{content},
+    description => $issue->{description},
+    as_a => $as_a,
+    i_want => $i_want,
+    so_that => $so_that,
+  };
+  push @cards, $card;
+  #print $issue->{key} . " - " . $issue->{summary} . "\n";
+}
+
+print qq[<?xml version="1.0" encoding="utf-8"?>\n];
+print "<cards>\n";
+foreach my $card (@cards) {
+  print "\t<card>\n";
+  foreach my $key (keys %$card) {
+    my $value = clean_up($card->{$key}) || '';
+    print "\t\t<$key>" . $value . "</$key>\n";
+  }
+  print "\t</card>\n";
+}
+print "</cards>\n";
+
+sub find_in_description {
+  my $text = shift;
+  my $find = shift;
+  my $match = ($text =~ /^$find(.*)$/m)[0];
+  return $match;
+  #return clean_up($match);
+}
+
+sub clean_up {
+    my $messy = shift;
+    return if ! defined $messy;
+
+    $messy =~ s{</p>}{}g;
+    $messy =~ s{<br ?/>}{}g;
+    $messy =~ s/</&lt;/g;
+    $messy =~ s/>/&gt;/g;
+    $messy =~ s/&nbsp;/ /g;
+
+    my $clean = $messy; #trust it now
+    return $clean
+}
+
+
+sub usage {
+    print "\nConvert an XML feed of JIRA issues (from Issue Navigator) to  Cardml formatted file  (no subtasks).\n";
+      print "Usage: rapidboardToCards <jiraissues.xml>\n";
+        print "\n";
+      }

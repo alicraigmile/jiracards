@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<cards>
+
+  <card>
+    <title>Hello World!</title>
+    <type>story</type>
+     <story-points>2</story-points>
+         <ticket>SAMPLE-1</ticket>
+  <as_a> Student</as_a>
+      <i_want>to see Hello World</i_want>
+        <so_that>I can tell if the application works</so_that>
+    </card>
+    
+    <card>
+        <title>Improve curriculum navigation</title>
+        <type>story</type>
+           <story-points>2</story-points>
+        <ticket>UNIFIEDPLACE-161</ticket>
+        <as_a>Student or Teacher</as_a>
+        <i_want>to know which resources are contained within a topic</i_want>
+        <so_that>I can find resoruces more easily</so_that>
+    </card>
+    
+    <card>
+        <title>Implement a story with a really long title which will appear wrapped on the card</title>
+        <type>story</type>
+        <story-points>2</story-points>
+            <ticket>SAMPLE-2</ticket>
+        <as_a>Student</as_a>
+        <i_want>to see Hello World</i_want>
+        <so_that>I can tell if the application works</so_that>
+    </card>
+
+    <card>
+        <title>Invade planet Earth</title>
+        <type>story</type>
+        <story-points>50</story-points>
+        <ticket>SAMPLE-3</ticket>
+        <as_a>Alien</as_a>
+        <i_want>to invade your planet</i_want>
+        <so_that>I can eat your brains</so_that>
+    </card>
+
+    
+</cards>

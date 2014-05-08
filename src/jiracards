@@ -1,0 +1,49 @@
+#!/bin/bash
+
+source jiracards.cfg
+
+URL=$1
+if [ -z "$1" ]; then
+  echo "Create a PDF document containing cards for each issue in a given Jira issue list of rapid board".
+  echo "Usage: jiracards <url>"
+  exit 0;
+fi
+
+
+#JIRA_ISSUES_URL="https://jira.dev.bbc.co.uk/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=project+%3D+KLCURREQ+AND+resolution+%3D+Unresolved+AND+issuetype+%3D+Epic+ORDER+BY+priority+DESC&tempMax=1000"
+#JIRA_ISSUES_URL="https://jira.dev.bbc.co.uk/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=project+%3D+KLCURREQ+AND+resolution+%3D+Unresolved+ORDER+BY+priority+DESC&tempMax=1000"
+#JIRA_ISSUES_URL="https://jira.dev.bbc.co.uk/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=project+%3D+UNIFIEDPLACE+AND+resolution+%3D+Unresolved+AND+fixVersion+%3D+29458+ORDER+BY+priority+DESC&tempMax=1000"
+#JIRA_ISSUES_URL="https://jira.dev.bbc.co.uk/secure/IssueNavigator.jspa?reset=true&jqlQuery=key+IN+%28UNIFIEDPLACE-7937%2C+UNIFIEDPLACE-1%29++ORDER+BY+priority+DESC"
+#JIRA_ISSUES_URL="https://jira.dev.bbc.co.uk/secure/IssueNavigator.jspa?reset=true&jqlQuery=labels+%3D+2014-Q3-Candidate+and+issuetype+%3D+Epic+ORDER+BY+Rank+ASC&tempMax=1000"
+#JIRA_ISSUES_URL="https://jira.dev.bbc.co.uk/sr/jira.issueviews:searchrequest-xml/37319/SearchRequest-37319.xml?tempMax=1000"
+#example JIRA_RAPIDBOARD_URL="https://jira.dev.bbc.co.uk/rest/greenhopper/1.0/xboard/work/allData/?rapidViewId=1750"
+
+if [[ "$URL" =~ rapidVideId ]]; then
+  echo "Fetching data from a JIRA sprint"
+
+  JIRA_RAPIDBOARD_URL="$URL"
+
+  curl "$JIRA_RAPIDBOARD_URL" > sprint.json.tmp
+  ./rapidboardToCards -f sprint.json.tmp > cards.xml.tmp
+
+else
+  echo "Fetching data from a issue navigator"
+
+  JIRA_ISSUES_URL="$URL"
+
+  # get data from a manually curated list of Jira tickets
+  curl "$JIRA_ISSUES_URL" > issues.xml.tmp
+  ./issuesToCards -f issues.xml.tmp > cards.xml.tmp
+fi
+
+
+#XSLT conversion of template + data into XSL-FO document
+CLASSPATH="${SAXON_JAR}:$CLASSPATH" $SAXON -s:cards.xml.tmp -xsl:jiracards.fo.xsl > jiracards.fo.tmp
+
+#Create PDF
+$FOP jiracards.fo.tmp jiracards.pdf
+
+echo "Wrote: jiracards.pdf"
+
+#Launch PDF on desktop
+$LAUNCH jiracards.pdf

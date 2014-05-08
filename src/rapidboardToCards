@@ -1,0 +1,64 @@
+#!/usr/bin/env perl
+
+# convert a JSON feed of a JIRA Rapid board to an XML cards file (no subtasks)
+
+use strict;
+use warnings;
+
+use Getopt::Std;
+use JSON;
+
+our %opts = ();
+getopt ':f', \%opts;
+
+if (! $opts{f}) {
+  print "** You need to supply a filename\n" if ! $opts{f};
+  usage();
+  exit 0;
+}
+
+sub usage {
+  print "\nConvert a JSON feed of a JIRA Rapid board to a cardml formated file (no subtasks)\n";
+  print "Usage: rapidboardToCards <rapidboards.json>\n";
+  print "\n";
+}
+
+local $/;
+open( my $fh, '<', $opts{f} );
+my $json_text   = <$fh>;
+
+my $sprints_data = decode_json( $json_text );
+
+
+#use Data::Dumper;
+#print  Dumper($sprints_data);
+
+#print "\n----------------\n";
+#print $sprints_data->{sprintsData}{sprints}[0]{name};
+#print "\n----------------\n";
+
+my @cards = ();
+
+foreach my $issue (@{$sprints_data->{issuesData}{issues}}) {
+  next if $issue->{typeName} eq 'Sub-task';
+  next if $issue->{typeName} eq 'Bug Sub-task';
+  my $card = { 
+    ticket => $issue->{key},
+    title => $issue->{summary},
+    priority => lc $issue->{priorityName},
+    type => lc $issue->{typeName}
+  };
+  push @cards, $card;
+  #print $issue->{key} . " - " . $issue->{summary} . "\n";
+}
+
+print qq[<?xml version="1.0" encoding="utf-8"?>\n];
+print "<cards>\n";
+foreach my $card (@cards) {
+  print "\t<card>\n";
+  foreach my $key (keys %$card) {
+    print "\t\t<$key>" . $card->{$key} . "</$key>\n";
+  }
+  print "\t</card>\n";
+}
+print "</cards>\n";

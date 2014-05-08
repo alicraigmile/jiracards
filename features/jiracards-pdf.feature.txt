@@ -1,0 +1,50 @@
+Feature:
+	As a project manager
+	I want to print out jira stories as cards
+	So that I can stick them up on the wall
+
+	Background:
+		Given there is a sprint in Jira
+
+	Scenario: A PDF document is generated
+		Then a PDF document is generated
+
+	Scenario: A PDF document has page numbers
+		And the sprint has no stories
+		When I generate the cards for the sprint
+		Then I see the message "No stories in this sprint."	
+
+	Scenario: Show 1 page when <=6 cards
+		And the sprint has 6 or less stories
+		When I generate the cards for the sprint
+		Then I see 1 page
+		And each page has cards on it
+
+	Scenario: I can see more than one page when >6 cards
+		And the sprint has more than 6 stories
+		When I generate the cards for the sprint
+		Then I see more than 1 page
+		And each page has cards on it
+
+	Scenario: I can see page numbers
+		When I generate the cards for the sprint
+		Then each page has page number on it
+
+	Scenario: I can see a page title on each page
+		When I generate the cards for the sprint
+		And each page has a title on it
+		And the title is shown in there Curious Sans font
+
+	Scenario: I can see a page title on each page
+		When I generate the cards for the sprint
+		And each page has a title on it
+		And the title is shown in Goldfish colour
+
+	#Scenario: + jira card outline
+
+	#Scenario: + jira card story points
+
+	#Scenario: + jira card title
+
+	#Scenario: + jira card user story
+
