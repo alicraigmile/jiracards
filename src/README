@@ -40,3 +40,9 @@ Paths for dependent applications can be changed and configured in jiracards.cfg.
 
 Jiracards depends on Saxon 9b (XSLT Processor) and FOP (XSL-FO Processor). Please make sure that PERL, CURL and BASH are in your $PATH environment variable too.
 
+--------------
+Project status
+--------------
+
+I'm planning to get 8 similar sizes cards onto a sheet of A4 to aid with printing there out. 
+I'd like to get story points onto the cards too (and perhaps status) - the problem is that keeps changing.
