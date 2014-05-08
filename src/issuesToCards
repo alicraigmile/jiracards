@@ -52,6 +52,7 @@ foreach my $issue (@{$issues_data->{rss}{channel}{item}}) {
     priority => lc $issue->{priority}{content},
     type => lc $issue->{type}{content},
     description => $issue->{description},
+    link => $issue->{link},
     as_a => $as_a,
     i_want => $i_want,
     so_that => $so_that,

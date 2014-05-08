@@ -42,11 +42,13 @@ my @cards = ();
 foreach my $issue (@{$sprints_data->{issuesData}{issues}}) {
   next if $issue->{typeName} eq 'Sub-task';
   next if $issue->{typeName} eq 'Bug Sub-task';
+  next if $issue->{status} eq 'Closed';
   my $card = { 
     ticket => $issue->{key},
     title => $issue->{summary},
     priority => lc $issue->{priorityName},
     type => lc $issue->{typeName}
+    link => $issue->{link}
   };
   push @cards, $card;
   #print $issue->{key} . " - " . $issue->{summary} . "\n";

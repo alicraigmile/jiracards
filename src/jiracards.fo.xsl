@@ -44,13 +44,19 @@ margin-left="1cm" margin-right="1cm">
               <fo:external-graphic src="url('icons/book.png')" vertical-align="middle" padding-right="5px"/>
             </xsl:when>
             <xsl:when test="type = 'bug'">
-              <fo:external-graphic src="url('icons/bug.png')" vertical-align="middle" padding-right="5px"/>
+              <fo:external-graphic src="url('icons/bug.gif')" vertical-align="middle" padding-right="5px"/>
             </xsl:when>
           </xsl:choose>
           <xsl:value-of select="title" />
         </fo:block>
         <fo:block-container position="absolute" right="0mm" top="-5mm" width="20mm">
-        <fo:block font-size="8pt" text-align="center"><xsl:value-of select="ticket" /></fo:block>
+          <fo:block font-size="8pt" text-align="center">
+            <fo:basic-link 
+              external-destination="url('{link}')" 
+                      color="black" text-decoration="underline">
+                              <xsl:value-of select="ticket" />
+                              </fo:basic-link>
+                            </fo:block>
         </fo:block-container>
         <fo:block-container position="absolute" right="0mm" width="20mm" line-height="2">
           <fo:block border="solid 0.5mm black" background-color="white" text-align="center" >
