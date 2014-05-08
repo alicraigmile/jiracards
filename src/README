@@ -2,7 +2,7 @@
 What does Jiracards do?
 -----------------------
 
-Create a PDF document containing cards for each issue in a given Jira issue list of rapid board.
+Create a PDF document containing cards for each issue in a given Jira issue list or rapid board.
 
 -----
 Usage
@@ -14,11 +14,11 @@ Usage: jiracards <url>
 Examples
 --------
 
-jiracards "https://jira.dev.bbc.co.uk/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=project+%3D+KLCURREQ+AND+         resolution+%3D+Unresolved+AND+issuetype+%3D+Epic+ORDER+BY+priority+DESC&tempMax=1000"
+jiracards "https://jira.dev.bbc.co.uk/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=project+%3D+KLCURREQ+AND+resolution+%3D+Unresolved+AND+issuetype+%3D+Epic+ORDER+BY+priority+DESC&tempMax=1000"
 
-jiracards "https://jira.dev.bbc.co.uk/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=project+%3D+KLCURREQ+AND+         resolution+%3D+Unresolved+ORDER+BY+priority+DESC&tempMax=1000"
+jiracards "https://jira.dev.bbc.co.uk/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=project+%3D+KLCURREQ+AND+resolution+%3D+Unresolved+ORDER+BY+priority+DESC&tempMax=1000"
 
-jiracards "https://jira.dev.bbc.co.uk/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=project+%3D+UNIFIEDPLACE+AND+     resolution+%3D+Unresolved+AND+fixVersion+%3D+29458+ORDER+BY+priority+DESC&tempMax=1000"
+jiracards "https://jira.dev.bbc.co.uk/sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml?jqlQuery=project+%3D+UNIFIEDPLACE+AND+resolution+%3D+Unresolved+AND+fixVersion+%3D+29458+ORDER+BY+priority+DESC&tempMax=1000"
 
 jiracards "https://jira.dev.bbc.co.uk/secure/IssueNavigator.jspa?reset=true&jqlQuery=key+IN+%28UNIFIEDPLACE-7937%2C+UNIFIEDPLACE-1%29++ORDER+BY+priority+DESC"
 
@@ -36,7 +36,7 @@ jiracards "https://jira.dev.bbc.co.uk/rest/greenhopper/1.0/xboard/work/allData/?
 Configuration
 -------------
 
-Paths to dependent applications can be configured in  jiracards.cfg.
+Paths for dependent applications can be changed and configured in jiracards.cfg.
 
-Jiracards depends on Saxon 9b (XSLT Processor) and FOP (XSL-FO Processor). Please make sure that PERL and BASH are in your $PATH environment variable too.
+Jiracards depends on Saxon 9b (XSLT Processor) and FOP (XSL-FO Processor). Please make sure that PERL, CURL and BASH are in your $PATH environment variable too.
 
