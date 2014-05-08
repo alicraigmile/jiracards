@@ -37,8 +37,10 @@ my $issues_data = XMLin( $xml_text, KeepRoot => 1 );
 my @cards = ();
 
 foreach my $issue (@{$issues_data->{rss}{channel}{item}}) {
-  next if $issue->{type} eq 'Sub-task';
-  next if $issue->{type} eq 'Bug Sub-task';
+  next if $issue->{type}{content} eq 'Sub-task';
+  next if $issue->{type}{content} eq 'Bug Sub-task';
+  next if $issue->{status}{content} eq 'Closed';
+  #use Data::Dumper; die Dumper($issue);  #debug
 
   my $as_a = find_in_description($issue->{description}, "As a ");
   my $i_want =  find_in_description($issue->{description}, "I want ") || find_in_description($issue->{description}, "I would like ");
