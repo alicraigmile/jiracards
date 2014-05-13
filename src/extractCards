@@ -6,6 +6,9 @@ use warnings;
 use Getopt::Std;
 use JSON;
 
+use lib 'lib';
+use JiraCards;
+
 our %opts = ();
 getopt ':f', \%opts;
 
@@ -31,13 +34,13 @@ foreach my $issue (@{$sprints_data->{issuesData}{issues}}) {
   next if $issue->{typeName} eq 'Sub-task';
   next if $issue->{typeName} eq 'Bug Sub-task';
   next if $issue->{status} eq 'Closed';
-  my $card = { 
+  my $card = new JiraCards::Card({ 
     ticket => $issue->{key},
     title => $issue->{summary},
     priority => lc $issue->{priorityName},
-    type => lc $issue->{typeName}
+    type => lc $issue->{typeName},
     status => lc $issue->{status}
-  };
+  });
   push @cards, $card;
   #print $issue->{key} . " - " . $issue->{summary} . "\n";
 }
@@ -47,7 +50,7 @@ print "<cards>\n";
 foreach my $card (@cards) {
   print "\t<card>\n";
   foreach my $key (keys %$card) {
-    print "\t\t<$key>" . $card->{$key} . "</$key>\n";
+    print "\t\t<$key>" . $card->get($key) . "</$key>\n";
   }
   print "\t</card>\n";
 }

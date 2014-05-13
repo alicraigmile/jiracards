@@ -18,7 +18,7 @@ fi
 #JIRA_ISSUES_URL="https://jira.dev.bbc.co.uk/sr/jira.issueviews:searchrequest-xml/37319/SearchRequest-37319.xml?tempMax=1000"
 #example JIRA_RAPIDBOARD_URL="https://jira.dev.bbc.co.uk/rest/greenhopper/1.0/xboard/work/allData/?rapidViewId=1750"
 
-if [[ "$URL" =~ rapidVideId ]]; then
+if [[ "$URL" =~ rapidViewId ]]; then
   echo "Fetching data from a JIRA sprint"
 
   JIRA_RAPIDBOARD_URL="$URL"

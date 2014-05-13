@@ -8,6 +8,9 @@ use warnings;
 use Getopt::Std;
 use XML::Simple;
 
+use lib 'lib';
+use JiraCards;
+
 binmode(STDOUT, ":utf8");          #treat as if it is UTF-8
 
 our %opts = ();
@@ -41,22 +44,44 @@ foreach my $issue (@{$issues_data->{rss}{channel}{item}}) {
   next if $issue->{type}{content} eq 'Bug Sub-task';
   next if $issue->{status}{content} eq 'Closed';
   #use Data::Dumper; die Dumper($issue);  #debug
+  
+  my $description = $issue->{description};
+  if (ref $description eq 'HASH') {
+    $description = '';
+  }
 
-  my $as_a = find_in_description($issue->{description}, "As a ");
-  my $i_want =  find_in_description($issue->{description}, "I want ") || find_in_description($issue->{description}, "I would like ");
-  my $so_that =  find_in_description($issue->{description}, "So that ");
+  my $as_a = find_in_description($description, "As a ");
+  my $i_want = find_in_description($description, "I want ") || find_in_description($description, "I would like ");
+  my $so_that = find_in_description($description, "So that ");
+  my $problem = find_next_paragraph($description, "Problem");
+  my $ux = find_next_paragraph($description, "UX");
+  my $feature_file =  find_next_paragraph($description, "Feature file");
 
-  my $card = { 
+  my $labels = $issue->{labels}->{label} || '';
+  if (ref $labels) {
+     $labels = join (', ', @{$issue->{labels}->{label}|| []});
+   }
+
+  my $card = JiraCards::Card->new({ 
     ticket => $issue->{key}{content},
     title => $issue->{summary},
     priority => lc $issue->{priority}{content},
     type => lc $issue->{type}{content},
-    description => $issue->{description},
+    description => $description,
     link => $issue->{link},
     as_a => $as_a,
     i_want => $i_want,
     so_that => $so_that,
-  };
+    problem => $problem,
+    ux => $ux,
+    feature_file => $feature_file,
+    labels => $labels
+
+  });
+
+  calculate_f(\$card);
+  calculate_i(\$card);
+
   push @cards, $card;
   #print $issue->{key} . " - " . $issue->{summary} . "\n";
 }
@@ -66,7 +91,8 @@ print "<cards>\n";
 foreach my $card (@cards) {
   print "\t<card>\n";
   foreach my $key (keys %$card) {
-    my $value = clean_up($card->{$key}) || '';
+    my $value = _clean_up($card->get($key)) || '';
+    $value = encode_for_xml($value) || ''; 
     print "\t\t<$key>" . $value . "</$key>\n";
   }
   print "\t</card>\n";
@@ -74,14 +100,82 @@ foreach my $card (@cards) {
 print "</cards>\n";
 
 sub find_in_description {
-  my $text = shift;
+  my $description = shift;
   my $find = shift;
+
+  #no sense looking in an empty string
+  return unless $description;
+
+  my $html = decode_html($description);
+  my $text = strip_html($html);
+
   my $match = ($text =~ /^$find(.*)$/m)[0];
   return $match;
-  #return clean_up($match);
+
+  #return _clean_up($match);
 }
 
-sub clean_up {
+sub find_next_paragraph {
+  my $description = shift;
+  my $find_after = shift;
+
+  #no sense looking in an empty string
+  return unless $description;
+
+  my $html = decode_html($description);
+  my $text = strip_html($html); 
+  
+  my $found = 0;
+  my @lines = split /\n/, $text;
+
+  foreach my $line (@lines) {
+    if ($line =~ /^$find_after/) {
+      $found = 1;
+      next;
+    }
+    if ($found == 1) {
+      $found++;
+      next;
+    } elsif ($found == 2) {
+      return $line;
+    }
+  }
+}
+
+sub decode_html {
+  my $encoded_html = shift;
+  return unless $encoded_html;
+
+  my $html = $encoded_html;
+  $html =~ s/&lt;/</g;
+  $html =~ s/&gt;/>/g;
+
+  return $html;
+}
+
+sub encode_for_xml {
+  my $text = shift;
+  return unless $text;
+
+  my $xml_text = $text;
+  $xml_text =~ s/&/&amp;/g;
+  $xml_text =~ s/</&lt;/g;
+  $xml_text =~ s/>/&gt;/g;
+
+  return $xml_text;
+}
+
+sub strip_html {
+  my $html = shift;
+  return unless $html;
+
+  my $text = $html;
+  $text =~ s/<\/?[^>]+>//g;
+
+  return $text;
+}
+
+sub __clean_up {
     my $messy = shift;
     return if ! defined $messy;
 
@@ -95,9 +189,43 @@ sub clean_up {
     return $clean
 }
 
+sub _clean_up
+{
+    my $messy = shift;
+
+    my $html = decode_html($messy);
+    my $clean = strip_html($html);
+
+    return $clean;
+  }
+
 
 sub usage {
     print "\nConvert an XML feed of JIRA issues (from Issue Navigator) to  Cardml formatted file  (no subtasks).\n";
-      print "Usage: rapidboardToCards <jiraissues.xml>\n";
+      print "Usage: rapidboardToCards -f <jiraissues.xml>\n";
         print "\n";
       }
+
+sub calculate_f {
+  my $card = shift;
+
+  my $f = 1;
+  $f+=1 if $$card->get('problem');
+  $f+=1 if $$card->get('as_a');
+  $f+=1 if $$card->get('i_want');
+  #$f+=1 if $$card->get('so_that');
+  $f+=1 if $$card->get('ux');
+  $f+=1 if $$card->get('feature_file');
+
+  $$card->set('f', $f);
+}
+
+sub calculate_i {
+  my $card = shift;
+
+  my $i = 1;
+  $i+=2 if $$card->get('priority') eq 'blocker';
+  $i+=1 if $$card->get('priority') eq 'normal';
+  $i+=3 if $$card->get('labels') =~ /2014-Q3-Candidate/;
+  $$card->set('i', $i);
+}
